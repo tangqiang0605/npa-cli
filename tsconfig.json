@@ -1,20 +1,23 @@
 {
+  "ts-node": {
+    "esm": true
+  },
   "compilerOptions": {
-    "outDir": "./lib",
-    "target": "es2017",
-    "module": "commonjs", //组织代码方式
+    "outDir": "bin",
+    "target": "ES5",
+    "module": "ESNext", //组织代码方式
     "sourceMap": true,
     "allowJs": true,
-    "moduleResolution": "node", // 模块解决策略
+    "moduleResolution": "NodeNext", // 模块解决策略
     "experimentalDecorators": true, // 开启装饰器定义
     "allowSyntheticDefaultImports": true, // 允许es6方式import
-    "lib": ["es2015","DOM"],
+    "resolveJsonModule": true,
+    "lib": ["es2015", "DOM"],
     "typeRoots": ["./node_modules/@types"],
     "declaration": true,
-    // "baseUrl": "./", // 解析非相对模块的基地址，默认是当前目录
-    // "paths": { // 路径映射，相对于baseUrl
-    // 	"@/*": ["src/*"]
-    // }
+    "baseUrl": "./src",
+    "rootDir": "src"
   },
+  "exclude": ["node_modules"],
   "include": ["src/**/*"]
 }
