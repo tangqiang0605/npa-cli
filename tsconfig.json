@@ -14,7 +14,7 @@
     "resolveJsonModule": true,
     "lib": ["es2015", "DOM"],
     "typeRoots": ["./node_modules/@types"],
-    "declaration": true,
+    "declaration": false,
     "baseUrl": "./src",
     "rootDir": "src"
   },
