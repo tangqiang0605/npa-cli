@@ -7,7 +7,6 @@ async function createOptimizeDepsRun(config) {
   //存放依赖导入
   const deps = await scanDeps(config)
 
-  // console.log(deps);
   return deps
 }
 export { createOptimizeDepsRun }

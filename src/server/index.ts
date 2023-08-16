@@ -25,7 +25,8 @@ async function createServer() {
   const server = {
     async listen(port) {
       // 在项目启动前进行依赖分析
-      await runDeps(config)
+
+      // await runDeps(config)
       require('http')
         .createServer(middlewares)
         .listen(port, async () => {
@@ -37,7 +38,13 @@ async function createServer() {
 }
 
 async function runDeps(config) {
-  return await createOptimizeDepsRun(config)
+  let res = null
+  try {
+    res = await createOptimizeDepsRun(config)
+  } catch (error) {
+    console.log(error)
+  }
+  return res
 }
 
 export { createServer }
