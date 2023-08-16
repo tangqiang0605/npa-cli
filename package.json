@@ -9,6 +9,7 @@
     "lib"
   ],
   "scripts": {
+    "run": "rollup -c -w",
     "dev": "ts-node src/index analyze",
     "dev:js": "pnpm build & node bin/index.cjs analyze",
     "build": "rollup -c",
