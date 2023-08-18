@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { conveyPath, getPackageSize } from './until.js'
+import { conveyPath, getDevDependencies, getPackageSize } from './until.js'
 const root = process.cwd()
 
 // npm
@@ -14,13 +14,13 @@ export function NPM_getDeps(pkg: string, path: string) {
     }),
   )
   if (
-    pkgJSON['dependencies'] ||
+    pkgJSON['dependencies'] &&
     JSON.stringify(pkgJSON['dependencies']) !== '{}'
   ) {
-    deps.dependencies = getDependencies(pkg, path, pkgJSON['dependencies'])
+    deps.dependencies = getDependencies(path, pkgJSON['dependencies'])
   }
   if (
-    pkgJSON['devDependencies'] ||
+    pkgJSON['devDependencies'] &&
     JSON.stringify(pkgJSON['devDependencies']) !== '{}'
   ) {
     deps.devDependencies = getDevDependencies(pkgJSON['devDependencies'])
@@ -28,7 +28,8 @@ export function NPM_getDeps(pkg: string, path: string) {
   return deps
 }
 
-function getDependencies(pkg: string, path: string, info: any) {
+// 获取普通依赖
+function getDependencies(path: string, info: any) {
   const dependencies = []
   for (let key in info) {
     key = conveyPath(key)
@@ -51,12 +52,15 @@ function getDependencies(pkg: string, path: string, info: any) {
         name: key,
         version: info[key],
         ...getPackageSize(innerPath[0]),
-        dependencies: pkgJSON.dependencies
-          ? getDependencies(key, innerPath[0], pkgJSON.dependencies)
-          : null,
-        devDependencies: pkgJSON.devDependencies
-          ? getDevDependencies(pkgJSON['devDependencies'])
-          : null,
+        dependencies:
+          pkgJSON.dependencies && JSON.stringify(pkgJSON.dependencies) !== '{}'
+            ? getDependencies(innerPath[0], pkgJSON.dependencies)
+            : null,
+        devDependencies:
+          pkgJSON.devDependencies &&
+          JSON.stringify(pkgJSON.devDependencies) !== '{}'
+            ? getDevDependencies(pkgJSON['devDependencies'])
+            : null,
       })
     } else {
       // 判断顶部node_modules
@@ -78,7 +82,7 @@ function getDependencies(pkg: string, path: string, info: any) {
           version: info[key],
           ...getPackageSize(outerPath[0]),
           dependencies: pkgJSON.dependencies
-            ? getDependencies(key, outerPath[0], pkgJSON.dependencies)
+            ? getDependencies(outerPath[0], pkgJSON.dependencies)
             : null,
           devDependencies: pkgJSON.devDependencies
             ? getDevDependencies(pkgJSON.devDependencies)
@@ -87,82 +91,5 @@ function getDependencies(pkg: string, path: string, info: any) {
       }
     }
   }
-
   return dependencies.length ? dependencies : null
 }
-
-function getDevDependencies(info: any) {
-  const devDependencies = []
-  for (const key in info) {
-    devDependencies.push({
-      name: key,
-      version: info[key],
-    })
-  }
-  return devDependencies
-}
-
-// export function NPM_getDeps(config: any, pkg: string) {
-//   const root = config.root
-//   let res = check(config, pkg)
-
-//   if (!res) return null
-//   pkg = conveyPath(pkg)
-//   const deps = {
-//     dependencies: null,
-//     devDependencies: null
-//   }
-//   const pkgJSON = JSON.parse(fs.readFileSync(`${root}\\node_modules\\${pkg}\\package.json`, {
-//     encoding: "utf-8"
-//   }))
-//   if (pkgJSON["dependencies"] || JSON.stringify(pkgJSON["dependencies"]) !== '{}') {
-//     deps.dependencies = getDependencies(config, pkg)
-//   }
-//   if (pkgJSON["devDependencies"] || JSON.stringify(pkgJSON["devDependencies"]) !== '{}') {
-//     deps.devDependencies = getDevDependencies(config, pkg, pkgJSON["devDependencies"])
-//   }
-//   return deps
-// }
-
-// // 获取依赖
-// export function getDependencies(config: any, pkg: string) {
-//   const root = config.root
-//   let res = check(config, pkg)
-//   if (!res) return null
-//   pkg = conveyPath(pkg)
-//   const pkgJSON = JSON.parse(fs.readFileSync(`${root}\\node_modules\\${pkg}\\package.json`, {
-//     encoding: "utf-8"
-//   }))
-//   if (!pkgJSON["dependencies"] || JSON.stringify(pkgJSON["dependencies"]) === '{}') {
-//     return null
-//   }
-//   const deps = []
-//   // 递归查找依赖所属的依赖
-//   for (let key in pkgJSON["dependencies"]) {
-//     if (key.indexOf("/") !== -1) {
-//       key = key.split("/").join("\\")
-//     }
-//     let existFolder = fs.existsSync(`${root}\\node_modules\\${key}`)
-//     let existFile = fs.existsSync(`${root}\\node_modules\\${key}\\package.json`)
-//     if (!existFolder || !existFile) continue
-//     deps.push({
-//       name: key,
-//       version: pkgJSON["dependencies"][key],
-//       ...getPackageSize(config, key),
-//       dependencies: getDependencies(config, key)
-//     })
-//   }
-//   return deps.length === 0 ? null : deps
-// }
-
-// // 获取开发依赖
-// export function getDevDependencies(config: any, pkg: string, info: any) {
-//   const deps = []
-//   for (let key in info) {
-//     deps.push({
-//       name: key,
-//       version: info[key],
-//     })
-//   }
-//   return deps.length === 0 ? null : deps
-// }

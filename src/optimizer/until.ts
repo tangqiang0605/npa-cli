@@ -37,3 +37,15 @@ function readFile(path: string, filesList: any[]) {
     }
   }
 }
+
+// 获取开发依赖
+export function getDevDependencies(info: any) {
+  const devDependencies = []
+  for (const key in info) {
+    devDependencies.push({
+      name: key,
+      version: info[key],
+    })
+  }
+  return devDependencies
+}
