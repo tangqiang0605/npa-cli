@@ -1,16 +1,7 @@
 import fs from 'fs'
-import { conveyPath, getPackageSize } from './until.js'
+import { DEP, conveyPath, getPackageSize } from './until.js'
 import { getDevDependencies } from './until.js'
 const root = process.cwd()
-
-interface DEP {
-  name: string
-  version: string
-  size: string
-  s: number
-  dependencies: DEP[] | null
-  devDependencies: DEP[] | null
-}
 
 export function PNPM_getDeps(pkg: string, path: string) {
   // 存储依赖信息 避免重复计算

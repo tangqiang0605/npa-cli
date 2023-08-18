@@ -38,6 +38,7 @@ async function getRootDeps(config: any, type: string) {
   const pkgJSON = JSON.parse(
     fs.readFileSync(`${config.root}\\package.json`, 'utf-8'),
   )
+
   const dependencies = pkgJSON.dependencies // 获取依赖
   const devDependencies = pkgJSON.devDependencies // 获取开发依赖
 
@@ -47,7 +48,8 @@ async function getRootDeps(config: any, type: string) {
       let _deps = null
       const path = `${root}\\node_modules\\${key}`
       switch (type) {
-        case 'npm' || 'yarn':
+        case 'npm':
+        case 'yarn':
           _deps = NPM_getDeps(key, path)
           break
         case 'pnpm':

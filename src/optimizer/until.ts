@@ -1,6 +1,14 @@
 import fs from 'fs'
 
-const root = process.cwd()
+export interface DEP {
+  name: string
+  version: string
+  size: string
+  s: number
+  dependencies: DEP[] | null
+  devDependencies: DEP[] | null
+}
+
 export function getPackageSize(path: string) {
   // if(pkg.indexOf("/") !== -1) {
   //   pkg = pkg.split("/").join("\\")
