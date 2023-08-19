@@ -4,7 +4,8 @@ import connect from 'connect'
 import { createOptimizeDepsRun } from '../optimizer/index.js'
 import { apiServer } from './middlewares/index.js'
 import { createWebSocketServer } from './ws.js'
-import chokidar = require('chokidar')
+// import chokidar = require('chokidar')
+import chokidar from 'chokidar'
 import path from 'path'
 import { handleHMRUpdate } from './hmr.js'
 
@@ -18,7 +19,7 @@ interface ServerConfig {
   // port:Number
 }
 
-async function createServer() {
+async function createServer(option: any) {
   // 配置中间件
   const config: ServerConfig = await resolveConfig()
   const middlewares = connect()
@@ -34,8 +35,6 @@ async function createServer() {
     watcher,
     async listen(port) {
       // 在项目启动前进行依赖分析
-
-      // await runDeps(config)
       require('http')
         .createServer(middlewares)
         .listen(port, async () => {
@@ -47,16 +46,6 @@ async function createServer() {
     await handleHMRUpdate(file, server)
   })
   return server
-}
-
-async function runDeps(config) {
-  let res = null
-  try {
-    res = await createOptimizeDepsRun(config)
-  } catch (error) {
-    console.log(error)
-  }
-  return res
 }
 
 export { createServer }

@@ -9,20 +9,33 @@ export interface DEP {
   devDependencies: DEP[] | null
 }
 
+let pkgMap = null // 保存包的大小信息 避免重复计算
+export function initPkgMap() {
+  pkgMap = new Map<
+    string,
+    {
+      size: string
+      s: number
+    }
+  >()
+}
+
 export function getPackageSize(path: string) {
-  // if(pkg.indexOf("/") !== -1) {
-  //   pkg = pkg.split("/").join("\\")
-  // }
+  if (pkgMap && pkgMap.has(path)) {
+    return pkgMap.get(path)
+  }
   const filesList = []
   readFile(`${path}`, filesList)
   let totalSize = 0
   for (const size of filesList) {
     totalSize += size
   }
-  return {
+  const info = {
     size: (totalSize / 1024).toFixed(2) + 'KB',
     s: totalSize,
   }
+  pkgMap.set(path, info)
+  return info
 }
 
 export function conveyPath(pkg: string) {

@@ -3,7 +3,7 @@ import { DEP, conveyPath, getPackageSize } from './until.js'
 import { getDevDependencies } from './until.js'
 const root = process.cwd()
 
-export function PNPM_getDeps(pkg: string, path: string) {
+export function PNPM_getDeps(pkg: string, path: string, depth: number) {
   // 存储依赖信息 避免重复计算
   const depMap = new Map<string, DEP>()
   const deps = {
@@ -20,7 +20,7 @@ export function PNPM_getDeps(pkg: string, path: string) {
     JSON.stringify(pkgJSON['dependencies']) !== '{}'
   ) {
     // 查找普通依赖
-    deps.dependencies = getDependencies(pkgJSON['dependencies'], depMap)
+    deps.dependencies = getDependencies(pkgJSON['dependencies'], depMap, depth)
   }
   if (
     pkgJSON['devDependencies'] &&
@@ -34,7 +34,9 @@ export function PNPM_getDeps(pkg: string, path: string) {
 
 const reg = /\^|\~/g
 // 查找开发依赖
-function getDependencies(info: any, depMap: Map<string, DEP>) {
+function getDependencies(info: any, depMap: Map<string, DEP>, depth: number) {
+  if (depth <= 0 && !Number.isNaN(depth)) return null
+  !Number.isNaN(depth) && depth--
   const dependencies = []
   for (let key in info) {
     key = conveyPath(key) // 名称格式化
@@ -70,7 +72,7 @@ function getDependencies(info: any, depMap: Map<string, DEP>) {
           ...getPackageSize(path[0]),
           dependencies:
             pkgJSON.dependencies && JSON.stringify(pkgJSON.dependencies) != '{}'
-              ? getDependencies(pkgJSON.dependencies, depMap)
+              ? getDependencies(pkgJSON.dependencies, depMap, depth)
               : null,
           devDependencies:
             pkgJSON.devDependencies &&

@@ -1,13 +1,22 @@
 import fs from 'fs'
-import { getPackageSize, getDevDependencies } from './until.js'
+import { getPackageSize, getDevDependencies, initPkgMap } from './until.js'
 import { NPM_getDeps } from './npm.js'
 import { PNPM_getDeps } from './pnpm.js'
 
+let depth = NaN,
+  json = null
+export function saveOption(_option: { depth: number; json: string }) {
+  depth = _option.depth
+  json = _option.json
+}
+
 export async function scanDeps(config: any) {
-  const type = buildType(config)
   let deps = null
+  if (depth <= 0 && !Number.isNaN(depth)) return deps // 如果传入的层次为 0
+  initPkgMap()
+  const type = buildType(config)
   if (type === 'none') return deps
-  deps = getRootDeps(config, type)
+  deps = getRootDeps(config, type, depth)
   return deps
 }
 
@@ -28,7 +37,7 @@ function buildType(config: any) {
   return 'none'
 }
 
-async function getRootDeps(config: any, type: string) {
+async function getRootDeps(config: any, type: string, depth: number) {
   const { root } = config
   const deps = {
     dependencies: null, // 依赖
@@ -41,7 +50,7 @@ async function getRootDeps(config: any, type: string) {
 
   const dependencies = pkgJSON.dependencies // 获取依赖
   const devDependencies = pkgJSON.devDependencies // 获取开发依赖
-
+  !Number.isNaN(depth) && depth--
   if (dependencies && JSON.stringify(dependencies) !== '{}') {
     deps.dependencies = []
     for (const key in dependencies) {
@@ -50,10 +59,10 @@ async function getRootDeps(config: any, type: string) {
       switch (type) {
         case 'npm':
         case 'yarn':
-          _deps = NPM_getDeps(key, path)
+          _deps = NPM_getDeps(key, path, depth)
           break
         case 'pnpm':
-          _deps = PNPM_getDeps(key, path)
+          _deps = PNPM_getDeps(key, path, depth)
           break
       }
       deps.dependencies.push({

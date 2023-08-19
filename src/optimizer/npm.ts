@@ -3,13 +3,13 @@ import { DEP, conveyPath, getDevDependencies, getPackageSize } from './until.js'
 const root = process.cwd()
 
 // npm
-export function NPM_getDeps(pkg: string, path: string) {
-  // 存储依赖信息 避免重复计算
-  const depMap = new Map<string, DEP>()
+export function NPM_getDeps(pkg: string, path: string, depth: number) {
   const deps = {
     dependencies: null,
     devDependencies: null,
   }
+  // 存储依赖信息 避免重复计算
+  const depMap = new Map<string, DEP>()
   const pkgJSON = JSON.parse(
     fs.readFileSync(`${path}\\package.json`, {
       encoding: 'utf-8',
@@ -19,7 +19,12 @@ export function NPM_getDeps(pkg: string, path: string) {
     pkgJSON['dependencies'] &&
     JSON.stringify(pkgJSON['dependencies']) !== '{}'
   ) {
-    deps.dependencies = getDependencies(path, pkgJSON['dependencies'], depMap)
+    deps.dependencies = getDependencies(
+      path,
+      pkgJSON['dependencies'],
+      depMap,
+      depth,
+    )
   }
   if (
     pkgJSON['devDependencies'] &&
@@ -31,7 +36,14 @@ export function NPM_getDeps(pkg: string, path: string) {
 }
 
 // 获取普通依赖
-function getDependencies(path: string, info: any, depMap: Map<string, DEP>) {
+function getDependencies(
+  path: string,
+  info: any,
+  depMap: Map<string, DEP>,
+  depth: number,
+) {
+  if (depth <= 0 && !Number.isNaN(depth)) return null
+  !Number.isNaN(depth) && depth--
   const dependencies = []
   for (let key in info) {
     key = conveyPath(key)
@@ -61,7 +73,12 @@ function getDependencies(path: string, info: any, depMap: Map<string, DEP>) {
           dependencies:
             pkgJSON.dependencies &&
             JSON.stringify(pkgJSON.dependencies) !== '{}'
-              ? getDependencies(innerPath[0], pkgJSON.dependencies, depMap)
+              ? getDependencies(
+                  innerPath[0],
+                  pkgJSON.dependencies,
+                  depMap,
+                  depth,
+                )
               : null,
           devDependencies:
             pkgJSON.devDependencies &&
@@ -94,7 +111,12 @@ function getDependencies(path: string, info: any, depMap: Map<string, DEP>) {
             dependencies:
               pkgJSON.dependencies &&
               JSON.stringify(pkgJSON.dependencies) !== '{}'
-                ? getDependencies(outerPath[0], pkgJSON.dependencies, depMap)
+                ? getDependencies(
+                    outerPath[0],
+                    pkgJSON.dependencies,
+                    depMap,
+                    depth,
+                  )
                 : null,
             devDependencies:
               pkgJSON.devDependencies &&

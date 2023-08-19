@@ -6,6 +6,9 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import chalk from 'chalk'
 import { createServer } from './server/index.js'
+import { saveOption, scanDeps } from 'optimizer/scan.js'
+import fs from 'fs'
+import { resolveConfig } from 'config.js'
 
 // 获取本模块的绝对路径
 const __filename = fileURLToPath(import.meta.url)
@@ -31,8 +34,21 @@ program
     // option为该命令的参数选项
     // console.log(option.depth); // 访问深度选项参数
     // console.log(option.json); // 访问json选项参数
+    saveOption(option) // 传递参数
+    if (option.json) {
+      // 判断是否存在json选项
+      const config = await resolveConfig()
+      // 调用方法写入文件
+      fs.writeFile(
+        `${process.cwd()}\\${option.json}`,
+        JSON.stringify(await scanDeps(config), null, '\t'),
+        () => {
+          console.log('successfully save the output as JSON')
+        },
+      )
+    }
     ;(async function () {
-      const server = await createServer()
+      const server = await createServer(option)
       server.listen(9999)
     })()
   })
