@@ -1,6 +1,14 @@
 import fs from 'fs'
 
-const root = process.cwd()
+export interface DEP {
+  name: string
+  version: string
+  size: string
+  s: number
+  dependencies: DEP[] | null
+  devDependencies: DEP[] | null
+}
+
 export function getPackageSize(path: string) {
   // if(pkg.indexOf("/") !== -1) {
   //   pkg = pkg.split("/").join("\\")
@@ -36,4 +44,16 @@ function readFile(path: string, filesList: any[]) {
       filesList.push(states.size)
     }
   }
+}
+
+// 获取开发依赖
+export function getDevDependencies(info: any) {
+  const devDependencies = []
+  for (const key in info) {
+    devDependencies.push({
+      name: key,
+      version: info[key],
+    })
+  }
+  return devDependencies
 }
