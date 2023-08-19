@@ -9,6 +9,17 @@ export interface DEP {
   devDependencies: DEP[] | null
 }
 
+let pkgMap = null // 保存包的大小信息 避免重复计算
+export function initPkgMap() {
+  pkgMap = new Map<
+    string,
+    {
+      size: string
+      s: number
+    }
+  >()
+}
+
 export function getPackageSize(path: string) {
   // if(pkg.indexOf("/") !== -1) {
   //   pkg = pkg.split("/").join("\\")
