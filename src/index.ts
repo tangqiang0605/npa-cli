@@ -9,7 +9,7 @@ import { createServer } from './server/index.js'
 
 // 获取本模块的绝对路径
 const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
+export const __dirname = dirname(__filename)
 // const __baseDir = join(__dirname, '..')
 
 // 使用require方法读取json文件（package.json)
@@ -29,12 +29,15 @@ program
   )
   .action(async (option) => {
     // option为该命令的参数选项
-    // console.log(option.depth); // 访问深度选项参数
-    // console.log(option.json); // 访问json选项参数
-    ;(async function () {
-      const server = await createServer()
-      server.listen(9999)
-    })()
+    const { depth, json } = option
+    if (json) {
+      ;(await import('./commands/create.js')).default(option)
+    } else {
+      ;(async function () {
+        const server = await createServer(depth, json)
+        server.listen(9999)
+      })()
+    }
   })
 
 program.addHelpText(

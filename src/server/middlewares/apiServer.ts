@@ -1,5 +1,5 @@
 import { resolveConfig } from '../../config.js'
-import { createOptimizeDepsRun } from 'optimizer/index.js'
+import { createOptimizeDepsRun } from '../../optimizer/index.js'
 
 interface ServerConfig {
   // 命令所在路径

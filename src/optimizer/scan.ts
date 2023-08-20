@@ -1,5 +1,3 @@
-import resolve from 'resolve'
-import path from 'path'
 import fs from 'fs'
 import { getPackageSize } from './until.js'
 import { NPM_getDeps } from './npm.js'

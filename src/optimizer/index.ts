@@ -6,7 +6,6 @@ import { scanDeps } from './scan.js'
 async function createOptimizeDepsRun(config) {
   //存放依赖导入
   const deps = await scanDeps(config)
-
   return deps
 }
 export { createOptimizeDepsRun }
