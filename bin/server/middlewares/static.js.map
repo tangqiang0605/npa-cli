@@ -1,1 +1,0 @@
-{"version":3,"file":"static.js","sourceRoot":"","sources":["../../../src/server/middlewares/static.ts"],"names":[],"mappings":"AAAA,OAAO,WAAW,MAAM,cAAc,CAAA;AACtC,OAAO,IAAI,MAAM,MAAM,CAAA;AACvB,SAAS,qBAAqB,CAAC,EAAQ;QAAN,IAAI,UAAA;IACnC,OAAO,WAAW,CAAC,IAAI,CAAC,OAAO,CAAC,IAAI,EAAE,QAAQ,CAAC,CAAC,CAAA;AAClD,CAAC;AACD,OAAO,EAAE,qBAAqB,EAAE,CAAA"}

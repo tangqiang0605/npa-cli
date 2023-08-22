@@ -5,6 +5,10 @@ import { PNPM_getDeps } from './pnpm.js'
 
 let depth = NaN,
   json = null
+/**
+ * @description 通过该函数注入参数（depth、json）
+ * @param _option
+ */
 export function saveOption(_option: { depth: number; json: string }) {
   depth = _option.depth
   json = _option.json

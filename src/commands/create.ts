@@ -1,16 +1,17 @@
 import path, { resolve } from 'path'
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'fs'
 import inquirer from 'inquirer'
-import { wrapLoading } from '../utils.js'
+import { wrapLoading } from '../utils/utils.js'
 import { resolveConfig } from '../config.js'
 import { createOptimizeDepsRun } from '../optimizer/index.js'
-import moment from 'moment'
+// @ts-ignore ignore 2307 error
+import dayjs from 'dayjs'
+import { cwd } from '../config.js'
 
 export default async function (option) {
-  const cwd = process.cwd()
   const { json } = option
   const targetDir = path.join(cwd, json)
-  const time = moment().format('-YYYY-MM-DD-HH_mm_ss')
+  const time = dayjs().format('-YYYY-MM-DD-HH_mm_ss')
   const outputFile = resolve(targetDir, `result${time}.json`)
   if (existsSync(targetDir)) {
     // 询问用户是否要删除

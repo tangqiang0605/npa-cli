@@ -1,4 +1,4 @@
-import getColorStr from '../src/getColorStr'
+import getColorStr from '../src/utils/getColorStr'
 
 describe('#getColorStr', () => {
   it('returns colorful string', () => {

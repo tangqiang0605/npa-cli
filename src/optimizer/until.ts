@@ -9,7 +9,10 @@ export interface DEP {
   devDependencies: DEP[] | null
 }
 
-let pkgMap = null // 保存包的大小信息 避免重复计算
+let pkgMap = null
+/**
+ * 保存包的大小信息 避免重复计算
+ */
 export function initPkgMap() {
   pkgMap = new Map<
     string,
