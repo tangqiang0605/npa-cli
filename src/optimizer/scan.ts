@@ -1,6 +1,6 @@
 import fs from 'fs'
 import { getPackageSize, getDevDependencies, initPkgMap } from './until.js'
-import { NPM_getDeps } from './npm.js'
+import { NPM_getDepInfo, NPM_getDeps } from './npm.js'
 import { PNPM_getDeps } from './pnpm.js'
 
 let depth = NaN,
@@ -47,13 +47,24 @@ async function getRootDeps(config: any, type: string, depth: number) {
     dependencies: null, // 依赖
     devDependencies: null, // 开发依赖
   }
+
   // 读取根package.json
   const pkgJSON = JSON.parse(
     fs.readFileSync(`${config.root}\\package.json`, 'utf-8'),
   )
-
   const dependencies = pkgJSON.dependencies // 获取依赖
   const devDependencies = pkgJSON.devDependencies // 获取开发依赖
+  let depMapped = null
+
+  // 判断项目构建类型
+  switch (type) {
+    case 'npm':
+    case 'yarn':
+      depMapped = NPM_getDepInfo(dependencies)
+      break
+  }
+  console.log(depMapped, '----')
+
   !Number.isNaN(depth) && depth--
   if (dependencies && JSON.stringify(dependencies) !== '{}') {
     deps.dependencies = []
@@ -63,7 +74,7 @@ async function getRootDeps(config: any, type: string, depth: number) {
       switch (type) {
         case 'npm':
         case 'yarn':
-          _deps = NPM_getDeps(key, path, depth)
+          _deps = NPM_getDeps(key, path, depth, depMapped)
           break
         case 'pnpm':
           _deps = PNPM_getDeps(key, path, depth)

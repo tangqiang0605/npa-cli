@@ -74,7 +74,7 @@ async function runDeps(config) {
 // 打开链接
 async function openPage() {
   const cmd = `start http://localhost:9999`
-  return await execPromisified(cmd)
+  // return await execPromisified(cmd)
 }
 
 export { createServer }
