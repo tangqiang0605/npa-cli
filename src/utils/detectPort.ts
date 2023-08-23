@@ -9,6 +9,7 @@ export function detectPort(port): Promise<boolean> {
       if (err.message.includes('EADDRINUSE')) {
         resolve(false)
       }
+      // 其它情况导致错误
       reject(false)
     })
 

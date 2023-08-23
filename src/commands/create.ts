@@ -6,9 +6,10 @@ import { resolveConfig } from '../config.js'
 import { createOptimizeDepsRun } from '../optimizer/index.js'
 // @ts-ignore ignore 2307 error
 import dayjs from 'dayjs'
-import { cwd } from '../config.js'
 
 export default async function (option) {
+  const config = await resolveConfig()
+  const { root: cwd } = config
   const { json } = option
   const targetDir = path.join(cwd, json)
   const time = dayjs().format('-YYYY-MM-DD-HH_mm_ss')
@@ -35,7 +36,6 @@ export default async function (option) {
       })
     }
   }
-  const config = await resolveConfig()
   const data = await createOptimizeDepsRun(config)
   mkdirSync(targetDir)
   writeFileSync(outputFile, JSON.stringify(data))

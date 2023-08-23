@@ -1,23 +1,28 @@
 import { program } from 'commander'
-// import chalk from 'chalk'
+import chalk from 'chalk'
 import { createServer } from '../server/index.js'
 import { saveOption, scanDeps } from '../optimizer/scan.js'
-import { version } from '../config.js'
+import { resolveConfig } from '../config.js'
+import type { ServerConfig } from '../config.js'
 
 // 解析参数
 const resolveOption = async (option) => {
+  const config: ServerConfig = await resolveConfig()
   const { depth, json } = option
   saveOption(option) // 保存参数
   if (json) {
     ;(await import('./create.js')).default(option)
   } else {
     ;(async function () {
-      await createServer()
+      await createServer(config)
     })()
   }
 }
 
-export function resolveCommend() {
+// 解析命令
+export async function resolveCommend() {
+  const { version } = await resolveConfig()
+
   program.version(`npa-cli@${version}`).usage('<command> [option]')
 
   program
@@ -32,16 +37,10 @@ export function resolveCommend() {
 
   program.addHelpText(
     'after',
-    `\nRun 
+    `\nRun ${chalk.blueBright(
       'npa-cli <command> --help',
-    for detailed usage of given command.`,
+    )} for detailed usage of given command.`,
   )
-  // program.addHelpText(
-  //   'after',
-  //   `\nRun ${chalk.blueBright(
-  //     'npa-cli <command> --help',
-  //   )} for detailed usage of given command.`,
-  // )
 
   program.parse(process.argv)
 }

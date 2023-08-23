@@ -2,31 +2,40 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { require } from './utils/utils.js'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-const __baseDir = join(__dirname, '..')
-
-const pkg = require(join(__dirname, '../package.json'))
-const version = pkg.version || 'version not found'
-
-const cwd = process.cwd()
-
 async function resolveConfig() {
+  // 本项目的路径
+  const __filename = fileURLToPath(import.meta.url)
+  const __dirname = dirname(__filename)
+  const __baseDir = join(__dirname, '..')
+
+  // 本项目的配置信息
+  const pkg = require(join(__dirname, '../package.json'))
+  const version = pkg.version || 'version not found'
+
+  const defaultPort = 9999
+  // 执行命令的位置
   const root = process.cwd()
 
   const config = {
-    // 执行命令的位置
-    root,
-    // 默认端口
-    defaultPort: 9999,
+    __filename,
+    __dirname,
+    __baseDir,
+    pkg,
     version,
+    defaultPort,
+    root,
   }
   return config
 }
 
 export interface ServerConfig {
-  root: string
+  __filename: string
+  __dirname: string
+  __baseDir: string
+  pkg: any
+  version: string
   defaultPort: number
+  root: string
 }
 
-export { resolveConfig, version, pkg, __baseDir, __filename, __dirname, cwd }
+export { resolveConfig }

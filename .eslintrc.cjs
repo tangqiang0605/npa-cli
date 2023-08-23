@@ -32,6 +32,6 @@ module.exports = {
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/no-namespace': 'off', // 禁止使用自定义 TypeScript 模块和命名空间。
     '@typescript-eslint/semi': 'off',
-    '@typescript-eslint/ban-ts-comment': 'off'
+    '@typescript-eslint/ban-ts-comment': 'off',
   },
 }

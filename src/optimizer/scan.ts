@@ -10,16 +10,17 @@ let depth = NaN,
  * @param _option
  */
 export function saveOption(_option: { depth: number; json: string }) {
-  depth = _option.depth
+  depth = Number(_option.depth)
   json = _option.json
 }
 
 export async function scanDeps(config: any) {
   let deps = null
   if (depth <= 0 && !Number.isNaN(depth)) return deps // 如果传入的层次为 0
-  initPkgMap()
   const type = buildType(config)
   if (type === 'none') return deps
+  // 开始分析
+  initPkgMap()
   deps = getRootDeps(config, type, depth)
   return deps
 }
@@ -42,16 +43,13 @@ function buildType(config: any) {
 }
 
 async function getRootDeps(config: any, type: string, depth: number) {
-  const { root } = config
+  const { root, pkg: pkgJSON } = config
   const deps = {
     dependencies: null, // 依赖
     devDependencies: null, // 开发依赖
   }
 
   // 读取根package.json
-  const pkgJSON = JSON.parse(
-    fs.readFileSync(`${config.root}\\package.json`, 'utf-8'),
-  )
   const dependencies = pkgJSON.dependencies // 获取依赖
   const devDependencies = pkgJSON.devDependencies // 获取开发依赖
   let depMapped = null
@@ -63,7 +61,7 @@ async function getRootDeps(config: any, type: string, depth: number) {
       depMapped = NPM_getDepInfo(dependencies)
       break
   }
-  console.log(depMapped, '----')
+  // console.log(depMapped, '----')
 
   !Number.isNaN(depth) && depth--
   if (dependencies && JSON.stringify(dependencies) !== '{}') {

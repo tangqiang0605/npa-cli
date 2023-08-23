@@ -28,7 +28,7 @@ export function createWebSocketServer(httpServer: any) {
     send(payload) {
       // 调用此方法可以向所有的客户端发送消息
       const stringified = JSON.stringify(payload)
-      wss.clients.array.forEach((client) => {
+      wss.clients.forEach((client) => {
         client.send(stringified)
       })
     },
