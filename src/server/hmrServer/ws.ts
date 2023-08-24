@@ -1,3 +1,4 @@
+import { logInfo } from '../../utils/utils.js'
 import { WebSocketServer } from 'ws'
 
 export function createWebSocketServer(httpServer: any) {
@@ -20,7 +21,7 @@ export function createWebSocketServer(httpServer: any) {
         type: 'connected',
       }),
     )
-    console.log('客户端连接成功')
+    logInfo('client connected - hmrServer working')
   })
   return {
     on: wss.on.bind(wss), // 通过on方法可以监听客户端发过来的请求

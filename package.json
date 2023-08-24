@@ -1,18 +1,23 @@
 {
-  "name": "npa-cli",
-  "version": "1.0.0",
-  "description": "",
-  "main": "lib/index.js",
+  "name": "npm-package-analyzer",
+  "version": "1.0.2",
+  "description": "an npm package analyzer",
   "type": "module",
-  "bin": "bin/index.js",
+  "bin": {
+    "npa-cli": "bin/index.cjs"
+  },
   "files": [
-    "lib"
+    "bin",
+    "public"
   ],
   "scripts": {
-    "run": "rollup -c -w",
-    "dev": "ts-node src/index analyze",
-    "dev:js": "pnpm build & node bin/index.cjs analyze",
+    "debug": "ts-node src/index analyze",
+    "debug:js": "node bin/index.cjs analyze",
     "build": "rollup -c",
+    "build:w": "rollup -c -w",
+    "dev": "ts-node src/index analyze",
+    "dev:w": "nodemon scr/index.ts analyze",
+    "dev:js": "pnpm build && node bin/index.cjs analyze",
     "prelink": "pnpm build",
     "test": "vitest",
     "lint": "eslint src",
@@ -38,8 +43,13 @@
       "path": "node_modules/cz-git"
     }
   },
-  "keywords": [],
-  "author": "npa开发组ab",
+  "keywords": [
+    "npm",
+    "yarn",
+    "pnpm",
+    "cli"
+  ],
+  "author": "NPA开发组",
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.22.9",

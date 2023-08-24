@@ -43,7 +43,7 @@ function buildType(config: any) {
 }
 
 async function getRootDeps(config: any, type: string, depth: number) {
-  const { root, pkg: pkgJSON } = config
+  const { root, pkgJSON } = config
   const deps = {
     dependencies: null, // 依赖
     devDependencies: null, // 开发依赖

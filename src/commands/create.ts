@@ -6,6 +6,7 @@ import { resolveConfig } from '../config.js'
 import { createOptimizeDepsRun } from '../optimizer/index.js'
 // @ts-ignore ignore 2307 error
 import dayjs from 'dayjs'
+import chalk from 'chalk'
 
 export default async function (option) {
   const config = await resolveConfig()
@@ -39,4 +40,5 @@ export default async function (option) {
   const data = await createOptimizeDepsRun(config)
   mkdirSync(targetDir)
   writeFileSync(outputFile, JSON.stringify(data))
+  console.log(chalk.green(`[${config.pkg.name}]: generate succeed!`))
 }

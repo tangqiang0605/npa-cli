@@ -1,23 +1,29 @@
-import { serveStaticMiddleware } from './middlewares/static.js'
+import {
+  globalStatic,
+  projectStatic,
+  serveStaticMiddleware,
+} from './middlewares/static.js'
 import { apiServer } from './middlewares/apiServer.js'
 import connect from 'connect'
 import { createWebSocketServer } from './hmrServer/ws.js'
 import chokidar from 'chokidar'
 import path from 'path'
 import { handleHMRUpdate } from './hmrServer/hmr.js'
-import { execPromisified, require, wrapLoading } from '../utils/utils.js'
+import {
+  execPromisified,
+  logInfo,
+  require,
+  wrapLoading,
+} from '../utils/utils.js'
 import { detectPort } from '../utils/detectPort.js'
-import chalk from 'chalk'
+// import chalk from 'chalk'
 
-/**
- *
- * @param depth 递归深度
- * @param json
- * @returns
- */
 // depth参数 todo
 async function createServer(config) {
   const middlewares = connect()
+
+  middlewares.use(globalStatic(config))
+  middlewares.use(projectStatic(config))
   middlewares.use(serveStaticMiddleware(config))
   middlewares.use('/api', apiServer)
 
@@ -26,8 +32,9 @@ async function createServer(config) {
   const ws = createWebSocketServer(httpServer)
   const watcher = chokidar.watch(path.resolve(config.root, 'package.json'))
   watcher.on('change', async (file) => {
-    wrapLoading('change', async () => {
+    wrapLoading('change', async (whenSucceedCb) => {
       await handleHMRUpdate(file, server)
+      whenSucceedCb(() => logInfo('rebuild successed'))
     })
   })
 
@@ -37,10 +44,10 @@ async function createServer(config) {
     async listen(port) {
       const result = await detectPort(port)
       if (result) {
-        wrapLoading('building...', async () => {
+        wrapLoading('building...', async (whenSucceedCb) => {
           httpServer.listen(port, async () => {
-            console.log(
-              chalk.green(`\nserver running at: http://localhost:${port}`),
+            whenSucceedCb(() =>
+              logInfo(`server running at: http://localhost:${port}`),
             )
           })
           await openPage(port)

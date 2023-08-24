@@ -1,10 +1,11 @@
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { require } from './utils/utils.js'
+import { readFileSync } from 'node:fs'
 
+const __filename = fileURLToPath(import.meta.url)
 async function resolveConfig() {
   // 本项目的路径
-  const __filename = fileURLToPath(import.meta.url)
   const __dirname = dirname(__filename)
   const __baseDir = join(__dirname, '..')
 
@@ -15,6 +16,7 @@ async function resolveConfig() {
   const defaultPort = 9999
   // 执行命令的位置
   const root = process.cwd()
+  const pkgJSON = JSON.parse(readFileSync(`${root}\\package.json`, 'utf-8'))
 
   const config = {
     __filename,
@@ -24,6 +26,7 @@ async function resolveConfig() {
     version,
     defaultPort,
     root,
+    pkgJSON,
   }
   return config
 }
