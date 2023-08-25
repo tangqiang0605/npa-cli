@@ -2,9 +2,9 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { require } from './utils/utils.js'
 
+const __filename = fileURLToPath(import.meta.url)
 async function resolveConfig() {
   // 本项目的路径
-  const __filename = fileURLToPath(import.meta.url)
   const __dirname = dirname(__filename)
   const __baseDir = join(__dirname, '..')
 

@@ -1,7 +1,13 @@
 import fs from 'fs'
-import { getPackageSize, getDevDependencies, initPkgMap } from './until.js'
-import { NPM_getDepInfo, NPM_getDeps } from './npm.js'
+import {
+  getPackageSize,
+  getDevDependencies,
+  initPkgMap,
+  getRandomCode,
+} from './until.js'
+// import { NPM_getDepInfo, NPM_getDeps } from './npm.js'
 import { PNPM_getDeps } from './pnpm.js'
+import { NPM_getDeps } from './npm.js'
 
 let depth = NaN,
   json = null
@@ -43,53 +49,69 @@ function buildType(config: any) {
 }
 
 async function getRootDeps(config: any, type: string, depth: number) {
-  const { root, pkg: pkgJSON } = config
+  const { root } = config
+  // 读取当前package.json
+  const pkgJSON = JSON.parse(
+    fs.readFileSync(`${root}\\package.json`, {
+      encoding: 'utf-8',
+    }),
+  )
   const deps = {
     dependencies: null, // 依赖
     devDependencies: null, // 开发依赖
   }
-
+  const depSet = new Set<string>()
   // 读取根package.json
   const dependencies = pkgJSON.dependencies // 获取依赖
   const devDependencies = pkgJSON.devDependencies // 获取开发依赖
-  let depMapped = null
-
-  // 判断项目构建类型
-  switch (type) {
-    case 'npm':
-    case 'yarn':
-      depMapped = NPM_getDepInfo(dependencies)
-      break
-  }
-  // console.log(depMapped, '----')
 
   !Number.isNaN(depth) && depth--
   if (dependencies && JSON.stringify(dependencies) !== '{}') {
-    deps.dependencies = []
+    deps.dependencies = {
+      points: [],
+      arrows: [],
+    }
     for (const key in dependencies) {
-      let _deps = null
       const path = `${root}\\node_modules\\${key}`
-      switch (type) {
-        case 'npm':
-        case 'yarn':
-          _deps = NPM_getDeps(key, path, depth, depMapped)
-          break
-        case 'pnpm':
-          _deps = PNPM_getDeps(key, path, depth)
-          break
-      }
-      deps.dependencies.push({
+      const id = `${key}${dependencies[key]}`
+      const group = getRandomCode()
+      if (depSet.has(id)) continue
+      depSet.add(`${id}`)
+      deps.dependencies.points.push({
+        id,
         name: key,
         version: dependencies[key],
         ...getPackageSize(path),
-        dependencies: _deps.dependencies,
-        devDependencies: _deps.devDependencies,
+        group,
       })
+      if (type === 'npm' || type === 'yarn') {
+        NPM_getDeps(
+          path,
+          { name: key, version: dependencies[key] },
+          depth,
+          depSet,
+          deps.dependencies.points,
+          deps.dependencies.arrows,
+          group,
+        )
+      } else if (type === 'pnpm') {
+        PNPM_getDeps(
+          path,
+          { name: key, version: dependencies[key] },
+          depth,
+          depSet,
+          deps.dependencies.points,
+          deps.dependencies.arrows,
+          group,
+        )
+      }
     }
   }
   if (devDependencies && JSON.stringify(devDependencies) !== '{}') {
-    deps.devDependencies = getDevDependencies(devDependencies)
+    deps.devDependencies = {
+      points: getDevDependencies(devDependencies),
+      arrows: [],
+    }
   }
-
   return deps
 }
