@@ -70,6 +70,7 @@ async function getRootDeps(config: any, type: string, depth: number) {
     deps.dependencies = {
       points: [],
       arrows: [],
+      top: [],
     }
     for (const key in dependencies) {
       const path = `${root}\\node_modules\\${key}`
@@ -77,6 +78,7 @@ async function getRootDeps(config: any, type: string, depth: number) {
       const group = getRandomCode()
       if (depSet.has(id)) continue
       depSet.add(`${id}`)
+      deps.dependencies.top.push(key)
       deps.dependencies.points.push({
         id,
         name: key,
@@ -111,6 +113,7 @@ async function getRootDeps(config: any, type: string, depth: number) {
     deps.devDependencies = {
       points: getDevDependencies(devDependencies),
       arrows: [],
+      top: Object.keys(devDependencies),
     }
   }
   return deps
