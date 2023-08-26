@@ -1,13 +1,14 @@
 import fs from 'fs'
 
-export interface DEP {
+export type PointsInt = {
+  id: string
   name: string
   version: string
   size: string
   s: number
-  dependencies: DEP[] | null
-  devDependencies: DEP[] | null
 }
+export type ArrowsInt = { target: string; source: string; value: 1 }
+export type PkgInfoInt = { name: string; version: string }
 
 let pkgMap = null
 /**
@@ -67,9 +68,15 @@ export function getDevDependencies(info: any) {
   const devDependencies = []
   for (const key in info) {
     devDependencies.push({
-      name: key,
-      version: info[key],
+      id: `${key}${info[key]}`,
+      name: `${key}`,
+      version: `${info[key]}`,
+      group: getRandomCode(),
     })
   }
   return devDependencies
+}
+
+export function getRandomCode() {
+  return Math.random().toString(36).slice(-8)
 }

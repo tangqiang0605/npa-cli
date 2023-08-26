@@ -32,4 +32,6 @@ export default {
     typescript(),
     babel({ babelHelpers: 'bundled' }), // babel配置,编译es6
   ],
+
+  sourcemap: true,
 }

@@ -1,5 +1,5 @@
 // .eslintignore 配置, 防止校验打包的产物
-dist
+bin
 node_modules
 scripts
 public

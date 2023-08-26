@@ -22,7 +22,6 @@ const resolveOption = async (option) => {
 // 解析命令
 export async function resolveCommend() {
   const { version } = await resolveConfig()
-
   program.version(`npa-cli@${version}`).usage('<command> [option]')
 
   program
