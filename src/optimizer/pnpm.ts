@@ -52,6 +52,7 @@ function getDependencies(
 ) {
   if (depth <= 0 && !Number.isNaN(depth)) return null
   !Number.isNaN(depth) && depth--
+
   for (const key in info) {
     if (depSet.has(`${key}${info[key]}`)) continue
     const _key = conveyPath(key) // 名称格式化

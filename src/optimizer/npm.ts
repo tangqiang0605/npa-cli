@@ -51,6 +51,9 @@ function getDependencies(
   info: any,
   group: string,
 ) {
+  if (depth <= 0 && !Number.isNaN(depth)) return
+  !Number.isNaN(depth) && depth--
+
   for (const key in info) {
     if (depSet.has(`${key}${info[key]}`)) continue
     const _key = conveyPath(key)
