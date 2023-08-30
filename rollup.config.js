@@ -14,7 +14,7 @@ export default {
     file: 'bin/index.cjs',
     format: 'cjs',
     banner: '#! /usr/bin/env node\nglobal.navigator = {userAgent: "node.js"}', // 补丁
-    sourcemap: true,
+    // sourcemap: true,
   },
 
   plugins: [
@@ -29,7 +29,9 @@ export default {
     // 打包插件
     resolve({ preferBuiltins: true }), // 查找和打包node_modules中的第三方模块
     commonjs(), // 将 CommonJS 转换成 ES2015 模块供 Rollup 处理
-    typescript(),
+    typescript({
+      sourceMap: false,
+    }),
     babel({ babelHelpers: 'bundled' }), // babel配置,编译es6
   ],
 
