@@ -8,6 +8,7 @@ import {
 // import { NPM_getDepInfo, NPM_getDeps } from './npm.js'
 import { PNPM_getDeps } from './pnpm.js'
 import { NPM_getDeps } from './npm.js'
+import { join } from 'node:path'
 
 let depth = NaN,
   json = null
@@ -34,15 +35,15 @@ export async function scanDeps(config: any) {
 // 判斷项目构建类型
 function buildType(config: any) {
   if (
-    !fs.existsSync(`${config.root}\\node_modules`) ||
-    !fs.existsSync(`${config.root}\\package.json`)
+    !fs.existsSync(join(config.root, 'node_modules')) ||
+    !fs.existsSync(join(config.root, 'package.json'))
   )
     return 'none'
-  if (fs.existsSync(`${config.root}\\pnpm-lock.yaml`)) {
+  if (fs.existsSync(join(config.root, 'pnpm-lock.yaml'))) {
     return 'pnpm'
-  } else if (fs.existsSync(`${config.root}\\yarn.lock`)) {
+  } else if (fs.existsSync(join(config.root, 'yarn.lock'))) {
     return 'yarn'
-  } else if (fs.existsSync(`${config.root}\\package-lock.json`)) {
+  } else if (fs.existsSync(join(config.root, 'package-lock.json'))) {
     return 'npm'
   }
   return 'none'
@@ -52,7 +53,7 @@ async function getRootDeps(config: any, type: string, depth: number) {
   const { root } = config
   // 读取当前package.json
   const pkgJSON = JSON.parse(
-    fs.readFileSync(`${root}\\package.json`, {
+    fs.readFileSync(join(root, 'package.json'), {
       encoding: 'utf-8',
     }),
   )
@@ -73,7 +74,7 @@ async function getRootDeps(config: any, type: string, depth: number) {
       top: [],
     }
     for (const key in dependencies) {
-      const path = `${root}\\node_modules\\${key}`
+      const path = join(root, 'node_modules', key)
       const id = `${key}${dependencies[key]}`
       const group = getRandomCode()
       if (depSet.has(id)) continue

@@ -6,6 +6,8 @@ import {
   conveyPath,
   getPackageSize,
 } from './until.js'
+import { join } from 'node:path'
+
 const root = process.cwd()
 
 export function PNPM_getDeps(
@@ -18,7 +20,7 @@ export function PNPM_getDeps(
   group: string,
 ) {
   const pkgJSON = JSON.parse(
-    fs.readFileSync(`${path}\\package.json`, {
+    fs.readFileSync(join(path, 'package.json'), {
       encoding: 'utf-8',
     }),
   )
@@ -66,8 +68,16 @@ function getDependencies(
 
     // 路径 判断是否存在子依赖
     const path = [
-      `${root}\\node_modules\\.pnpm\\${version_key}\\node_modules\\${_key}`,
-      `${root}\\node_modules\\.pnpm\\${version_key}\\node_modules\\${_key}\\package.json`,
+      join(root, 'node_modules', '.pnpm', version_key, 'node_modules', key),
+      join(
+        root,
+        'node_modules',
+        '.pnpm',
+        version_key,
+        'node_modules',
+        key,
+        'package.json',
+      ),
     ]
     const folder = fs.existsSync(path[0])
     const file = fs.existsSync(path[1])
