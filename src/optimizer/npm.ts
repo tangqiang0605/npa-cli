@@ -6,6 +6,8 @@ import {
   conveyPath,
   getPackageSize,
 } from './until.js'
+import { join } from 'node:path'
+
 const root = process.cwd()
 
 type MappedInt = Map<string, Set<string>>
@@ -20,7 +22,7 @@ export function NPM_getDeps(
   group: string,
 ) {
   const pkgJSON = JSON.parse(
-    fs.readFileSync(`${path}\\package.json`, {
+    fs.readFileSync(join(path, 'package.json'), {
       encoding: 'utf-8',
     }),
   )
@@ -51,12 +53,15 @@ function getDependencies(
   info: any,
   group: string,
 ) {
+  if (depth <= 0 && !Number.isNaN(depth)) return
+  !Number.isNaN(depth) && depth--
+
   for (const key in info) {
     if (depSet.has(`${key}${info[key]}`)) continue
     const _key = conveyPath(key)
     const innerPath = [
-      `${path}\\node_modules\\${_key}`,
-      `${path}\\node_modules\\${_key}\\package.json`,
+      join(path, 'node_modules', key),
+      join(path, 'node_modules', key, 'package.json'),
     ]
     const innerExistFolder = fs.existsSync(innerPath[0])
     const innerExistFile = fs.existsSync(innerPath[1])
@@ -96,8 +101,8 @@ function getDependencies(
       }
     } else {
       const outerPath = [
-        `${root}\\node_modules\\${_key}`,
-        `${root}\\node_modules\\${_key}\\package.json`,
+        join(root, 'node_modules', key),
+        join(root, 'node_modules', key, 'package.json'),
       ]
       const outerExistFolder = fs.existsSync(outerPath[0])
       const outerExistFile = fs.existsSync(outerPath[1])

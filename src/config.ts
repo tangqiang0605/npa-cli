@@ -10,13 +10,13 @@ async function resolveConfig() {
   const __baseDir = join(__dirname, '..')
 
   // 本项目的配置信息
-  const pkg = require(join(__dirname, '../package.json'))
+  const pkg = require(join(__baseDir, 'package.json'))
   const version = pkg.version || 'version not found'
 
-  const defaultPort = 9999
+  const defaultPort = 8080
   // 执行命令的位置
   const root = process.cwd()
-  const pkgJSON = JSON.parse(readFileSync(`${root}\\package.json`, 'utf-8'))
+  const pkgJSON = JSON.parse(readFileSync(join(root, 'package.json'), 'utf-8'))
 
   const config = {
     __filename,

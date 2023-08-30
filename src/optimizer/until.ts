@@ -1,5 +1,5 @@
 import fs from 'fs'
-
+import { join } from 'node:path'
 export type PointsInt = {
   id: string
   name: string
@@ -43,9 +43,9 @@ export function getPackageSize(path: string) {
 }
 
 export function conveyPath(pkg: string) {
-  if (pkg.indexOf('/') !== -1) {
-    pkg = pkg.split('/').join('\\')
-  }
+  // if (pkg.indexOf('/') !== -1) {
+  //   pkg = pkg.split('/').join('\\')
+  // }
   return pkg
 }
 
@@ -54,9 +54,9 @@ function readFile(path: string, filesList: any[]) {
   const files = fs.readdirSync(path) //需要用到同步读取
   files.forEach(walk)
   function walk(file: any) {
-    const states = fs.statSync(path + '/' + file)
+    const states = fs.statSync(join(path, file))
     if (states.isDirectory()) {
-      readFile(path + '/' + file, filesList)
+      readFile(join(path, file), filesList)
     } else {
       filesList.push(states.size)
     }
