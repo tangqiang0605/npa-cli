@@ -5,7 +5,7 @@ Also known as npm-package-analyzer, is a tool that generates tree or graph like 
 - Support for Hot Module Replacement(HMR). When you add or remove dependencies, the view will automatically synchronize updates.
 - Compatible with various package managers such as NPM, Yarn, and PNPM.
 
-[![npm version](https://badge.fury.io/js/npm-package-analyzer.svg)](https://badge.fury.io/js/npm-package-analyzer)
+[![npm version](https://badge.fury.io/js/npm-package-analyzer.svg)](https://badge.fury.io/js/npm-package-analyzer)[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
 ## Installation
 
@@ -21,7 +21,7 @@ You can also install npm-package-analyzer as a development dependency:
 npm install --save-dev  # or using yarn: yarn add npm-package-analyzer -D
 ```
 
-With a local installation, npm-package-analyzer will not be available in your system path or you can't use it directly from the command line. Instead, the local installation of npm-package-analyzer can be run by calling it from within an npm script (such as `npm start`) or using `npx npm-package-analyzer -h`.
+With a local installation, npm-package-analyzer will not be available in your system path or you can't use it directly from the command line. Instead, the local installation of npm-package-analyzer can be run by calling it from within an npm script (such as `npa analyze`) or using `npx npa analyze`.
 
 ## Usage
 For CLI options, use the `-h` (or `--help`) argument:
@@ -36,16 +36,16 @@ Analyze the dependency tree of your project:
 npa-cli analyze
 ```
 
-Export the result as a JSON file:
-
-```
-npa-cli analyze -j dir-path
-```
-
 Limit analysis depth:
 
 ```
-npa-cli analyze -d <depth>`
+npa-cli analyze -d <depth>
+```
+
+Export the result as a JSON file:
+
+```
+npa-cli analyze -j <dir-path>
 ```
 
 ## License
